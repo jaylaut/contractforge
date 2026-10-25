@@ -1,0 +1,59 @@
+# ============================================================
+# ContractForge 依赖清单
+# 原则：延续 agentforge 的「底层手写」——不引入 LangChain/LlamaIndex。
+# 本项目复用 agentforge 的 LLM 网关（可 pip install -e 引入）。
+# ============================================================
+
+# ---- agentforge（本地库，复用 LLM 网关 / 结构化输出）----
+# 安装方式：pip install -e ../rag/agentforge
+# -e ../rag/agentforge
+
+# ---- 文档解析（本项目新增：合同是 PDF/Word/扫描件，RAG 项目当时刻意未用）----
+pdfplumber>=0.11          # PDF 文本 + 坐标提取（风险点原文定位的基础）
+python-docx>=1.1          # Word 文档解析
+paddleocr>=2.7            # OCR（扫描件/图片合同，本地推理，数据不出域）
+paddlepaddle>=2.6         # PaddleOCR 运行时的 CPU 推理框架
+
+# ---- DOC 转 PDF（旧 .doc / .wps 需转换对齐页坐标）----
+# 依赖系统安装 LibreOffice：`libreoffice --headless --convert-to pdf`
+# 不在 Python 依赖里，记录于 README / docker-compose
+
+# ---- HTTP 客户端（LLM 网关用，同步+异步双模式）----
+httpx>=0.27
+
+# ---- 配置管理 ----
+pydantic>=2.5
+pydantic-settings>=2.0
+python-dotenv>=1.0
+
+# ---- 数据库（PostgreSQL + pgvector 向量检索）----
+sqlalchemy>=2.0           # ORM
+asyncpg>=0.29             # 异步 PG 驱动
+pgvector>=0.3             # pgvector 向量扩展的 Python 客户端
+
+# ---- 异步任务队列（长文档解析 / 批量审查）----
+# 阶段 0（保底）：轻量队列，先跑通异步模式
+arq>=0.26                 # 基于 Redis 的轻量 asyncio 任务队列
+redis>=5.0
+# 阶段 1（大厂级场景）：真实企业级消息队列 Kafka
+# 用于审查流水线解耦 / 批量审查削峰 / 结果异步通知 / 审计事件流
+# kafka-python>=2.0        # Kafka Python 客户端（或选 confluent-kafka）
+# confluent-kafka>=2.3     # 性能更好的 C 客户端（生产推荐）
+
+# ---- 可观测与压测（阶段 4 贯穿）----
+opentelemetry-api>=1.20            # 链路追踪
+opentelemetry-sdk>=1.20
+opentelemetry-instrumentation-fastapi>=0.44b0
+prometheus-client>=0.20            # 指标暴露
+# locust>=2.20                     # 压测工具（可放 dev 依赖或单独环境）
+
+# ---- API 服务 ----
+fastapi>=0.110
+uvicorn[standard]>=0.29
+python-multipart>=0.0.9   # 文件上传
+PyJWT>=2.8                # JWT 认证（替代已停维护的 python-jose）
+argon2-cffi>=23.1         # 密码哈希（替代已停维护的 passlib[bcrypt]）
+
+# ---- 测试 ----
+pytest>=8.0
+pytest-asyncio>=0.23

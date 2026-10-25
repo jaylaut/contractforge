@@ -1,0 +1,40 @@
+# ============================================================
+# Git 忽略规则（ContractForge）
+# ============================================================
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+
+# ---- 环境与密钥 ----
+.env
+
+# ---- 数据（合同是敏感数据，不入 git）----
+data/contracts/
+data/logs/
+*.db
+*.sqlite3
+
+# ---- 前端 ----
+node_modules/
+frontend/dist/
+frontend/.vite/
+
+# ---- IDE / 系统 ----
+.idea/
+.vscode/
+.DS_Store
+
+# ---- 测试缓存 ----
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ---- 工作区本地数据 ----
+.workbuddy/
